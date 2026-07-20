@@ -1,14 +1,8 @@
 from dataclasses import dataclass, field
 
 from config import (
-    AMOCRM_BASE_DOMAIN,
-    AMOCRM_CLIENT_ID,
-    AMOCRM_CLIENT_SECRET,
-    AMOCRM_REDIRECT_URI,
+    AMOCRM_BASE_URL,
     AMOCRM_ACCESS_TOKEN,
-    AMOCRM_REFRESH_TOKEN,
-    AMOCRM_LOGIN_EMAIL,
-    AMOCRM_LOGIN_PASSWORD,
     AMOCRM_ACCOUNT_ID,
 )
 from src.integrations.amocrm.statuses import LossStatuses, WonStatuses
@@ -45,14 +39,8 @@ class AmoCfg:
     limit: int = 50
     max_pages: int = 20
 
-    base_domain: str = AMOCRM_BASE_DOMAIN
-    client_id: str = AMOCRM_CLIENT_ID
-    client_secret: str = AMOCRM_CLIENT_SECRET
-    redirect_uri: str = AMOCRM_REDIRECT_URI
+    base_url: str = AMOCRM_BASE_URL
     access_token: str = AMOCRM_ACCESS_TOKEN
-    refresh_token: str = AMOCRM_REFRESH_TOKEN
-    login_email: str = AMOCRM_LOGIN_EMAIL
-    login_password: str = AMOCRM_LOGIN_PASSWORD
     account_id: str = AMOCRM_ACCOUNT_ID
 
     @property
