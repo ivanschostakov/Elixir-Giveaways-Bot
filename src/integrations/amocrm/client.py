@@ -124,11 +124,3 @@ class AsyncAmoCRM:
     def is_won_status(self, status_id: int | None) -> bool: return bool(status_id and status_id in self.won_statuses_list)
     def is_loss_status(self, status_id: int | None) -> bool: return bool(status_id and status_id in self.loss_statuses_list)
     def get_status_name(self, status_id: int) -> str: return self.inverted_statuses.get(status_id, None)
-
-async def main() -> None:
-    client = AsyncAmoCRM()
-    result = await client.get_lead("30-4M8WI")
-    print(result)
-
-if __name__ == "__main__":
-    asyncio.run(main())

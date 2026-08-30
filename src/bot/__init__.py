@@ -21,6 +21,6 @@ async def run_bot():
     reminder_task = asyncio.create_task(run_reminders(bot)) if REMINDERS_ENABLED else None
     try: await dp.start_polling(bot)
     finally:
-        if reminder_task is None: return
-        reminder_task.cancel()
-        with suppress(asyncio.CancelledError): await reminder_task
+        if reminder_task is not None:
+            reminder_task.cancel()
+            with suppress(asyncio.CancelledError): await reminder_task

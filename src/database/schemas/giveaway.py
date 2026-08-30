@@ -21,7 +21,6 @@ def _normalize_prizes(value: Any) -> dict[int, GiveawayPrizeSchema]:
         elif isinstance(prize, dict): normalized[int_key] = GiveawayPrizeSchema.model_validate(prize)
         else: raise ValueError("prize value must be an object with name and amount")
 
-    print(normalized)
     return normalized
 
 

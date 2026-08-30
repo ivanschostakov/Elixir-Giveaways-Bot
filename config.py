@@ -45,7 +45,7 @@ AMOCRM_ACCESS_TOKEN   = getenv("AMOCRM_ACCESS_TOKEN")
 
 BITRIX24_BASE_URL = (getenv("BITRIX24_BASE_URL") or "https://elixirpeptide.ru").rstrip("/")
 BITRIX24_ENDPOINT = getenv("BITRIX24_ENDPOINT") or "/local/api/giveaways.php"
-BITRIX24_TOKEN = getenv("BITRIX24_TOKEN") or "8599029089:AAE2Nu4Jaj-Pox_8jWtlwD-XViQJD2wb4QU"
+BITRIX24_TOKEN = getenv("BITRIX24_TOKEN")
 
 SMTP_USER = getenv("SMTP_USER")
 SMTP_PASSWORD = getenv("SMTP_PASSWORD")

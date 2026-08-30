@@ -107,7 +107,7 @@ async def _user_access_filter(event: Message | CallbackQuery) -> bool:
     can_send_messages = getattr(member, "can_send_messages", True)
     if can_send_messages: return True
     until_date = _normalize_until_date(getattr(member, "until_date", None))
-    print("until_date", until_date)
+    logger.debug("Restricted member expiration resolved | user_id=%s | until_date=%s", user_id, until_date)
     if until_date is not None: return True
 
     await _notify_endless_restriction(event)
