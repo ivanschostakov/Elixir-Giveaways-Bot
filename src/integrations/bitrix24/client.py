@@ -3,6 +3,7 @@ import httpx
 
 from datetime import datetime
 from typing import Optional, Any
+from urllib.parse import urljoin
 
 from config import BITRIX24_BASE_URL, BITRIX24_ENDPOINT, BITRIX24_TOKEN
 from src.integrations.bitrix24.exceptions import BitrixAPIError
@@ -23,7 +24,7 @@ class AsyncBitrix24:
         await self.open()
         return self
 
-    async def open(self) -> None: self._client = self._client or httpx.AsyncClient(base_url=self.base_url, timeout=self.timeout, headers={"Content-Type": "application/json", "Accept": "application/json"}, follow_redirects=True)
+    async def open(self) -> None: self._client = self._client or httpx.AsyncClient(base_url=self.base_url, timeout=self.timeout, headers={"Content-Type": "application/json", "Accept": "application/json"}, follow_redirects=False)
     async def close(self) -> None:
         if self._client is not None:
             await self._client.aclose()
@@ -43,20 +44,42 @@ class AsyncBitrix24:
             "text": text[:800],
         }
 
-    async def _post_json(self, body: dict[str, Any]) -> dict[str, Any]:
+    async def _post_json(self, body: dict[str, Any], *, target_url: str | None = None, redirects_remaining: int = 3) -> dict[str, Any]:
         client = self._require_client()
+        request_target = target_url or self.endpoint
         try:
-            res = await client.post(self.endpoint, json=body)
+            res = await client.post(request_target, json=body)
         except httpx.HTTPError as exc:
             raise BitrixAPIError(
                 status_code=503,
                 error="request_failed",
                 payload={
                     "cmd": body.get("cmd"),
-                    "url": f"{self.base_url}{self.endpoint}",
+                    "url": target_url or f"{self.base_url}{self.endpoint}",
                     "message": str(exc),
                 },
             ) from exc
+
+        if res.status_code in {301, 302, 303, 307, 308}:
+            location = (res.headers.get("location") or "").strip()
+            if not location:
+                raise BitrixAPIError(
+                    status_code=res.status_code,
+                    error="redirect_without_location",
+                    payload=self._response_payload(res, (res.text or "").strip(), body),
+                )
+            if redirects_remaining <= 0:
+                raise BitrixAPIError(
+                    status_code=res.status_code,
+                    error="too_many_redirects",
+                    payload=self._response_payload(res, (res.text or "").strip(), body),
+                )
+            redirect_target = urljoin(str(res.request.url), location)
+            return await self._post_json(
+                body,
+                target_url=redirect_target,
+                redirects_remaining=redirects_remaining - 1,
+            )
 
         text = (res.text or "").strip()
         if not text:

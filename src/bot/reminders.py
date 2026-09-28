@@ -45,7 +45,7 @@ def _next_reminder_run(now: datetime) -> datetime:
 def _is_giveaway_active_today(giveaway, *, today: date) -> bool:
     if not giveaway.active: return False
     if giveaway.start_date is not None and giveaway.start_date > today: return False
-    if giveaway.end_date is not None and giveaway.end_date < today: return False
+    if giveaway.end_date is not None and giveaway.end_date <= today: return False
     return True
 
 

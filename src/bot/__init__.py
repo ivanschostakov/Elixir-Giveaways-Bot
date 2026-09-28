@@ -7,11 +7,13 @@ from aiogram.enums import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
 
 from config import GIVEAWAYS_BOT_TOKEN, REMINDERS_ENABLED
-from src.bot.handlers import admin_router, user_router
+from src.bot.handlers import admin_router, user_router, voting_admin_router, voting_user_router
 from src.bot.reminders import run_reminders
 
 bot = Bot(GIVEAWAYS_BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher(storage=MemoryStorage())
+dp.include_router(voting_user_router)
+dp.include_router(voting_admin_router)
 dp.include_router(admin_router)
 dp.include_router(user_router)
 

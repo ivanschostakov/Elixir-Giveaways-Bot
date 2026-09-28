@@ -13,7 +13,7 @@ from src.condition import ConditionType
 from src.database.crud.participant_record import upsert_participant_record
 from src.database.models import Condition
 from src.database import get_session
-from src.database.crud import create_participant_record, get_condition, get_giveaway, get_participant_by_giveaway_user, get_participant_record_by_condition, list_giveaway_conditions, list_giveaways, list_records_by_condition, list_records_by_participant, update_participant_record
+from src.database.crud import create_participant_record, get_condition, get_giveaway, get_participant_by_giveaway_user, get_participant_record_by_condition, list_giveaway_conditions, list_giveaways, list_records_by_condition, list_records_by_participant, list_votings, update_participant_record
 from src.database.crud.user import ensure_user
 from src.database.schemas import ParticipantRecordCreate, ParticipantRecordUpdate
 from src.enums.results import APIResult
@@ -387,9 +387,15 @@ async def show_main_menu(message: Message, actor: Message | CallbackQuery, *, ed
     async with get_session() as session:
         await ensure_user(session, actor)
         giveaways = [giveaway for giveaway in await list_giveaways(session) if giveaway.active]
+        votings = [voting for voting in await list_votings(session) if voting.accepts_votes()]
 
-    text = user_texts.main_menu if giveaways else user_texts.no_giveaways
-    reply_markup = user_keyboards.main_menu(giveaways) if giveaways else None
+    if giveaways and votings:
+        text = "Выберите розыгрыш или голосование из списка ниже."
+    elif votings:
+        text = "Выберите голосование из списка ниже."
+    else:
+        text = user_texts.main_menu if giveaways else user_texts.no_giveaways
+    reply_markup = user_keyboards.main_menu(giveaways, votings) if giveaways or votings else None
     if edit:
         await message.edit_text(text, reply_markup=reply_markup)
         return

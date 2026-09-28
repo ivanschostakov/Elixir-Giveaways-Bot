@@ -16,6 +16,7 @@ def main_menu(giveaways: list[Giveaway]) -> InlineKeyboardMarkup:
     giveaway_buttons = [InlineKeyboardButton(text=f"{giveaway.name}", callback_data=f"view_giveaway:{giveaway.id}") for giveaway in giveaways]
     return InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="➕ Новый розыгрыш", callback_data="create_giveaway")],
+        [InlineKeyboardButton(text="🗳 Голосования", callback_data="vadmin:list")],
     ] + [giveaway_buttons[i:i+2] for i in range(0, len(giveaways), 2)])
 
 

@@ -4,7 +4,19 @@ from src.database.schemas import GiveawayRead, GiveawayReadWithRelations
 
 
 def view_giveaway(giveaway: GiveawayRead | GiveawayReadWithRelations) -> InlineKeyboardMarkup: return InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text=giveaway.name, callback_data=f"view_giveaway:{giveaway.id}")]])
-def main_menu(giveaways: list[GiveawayRead | GiveawayReadWithRelations]) -> InlineKeyboardMarkup: return InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text=giveaway.name, callback_data=f"view_giveaway:{giveaway.id}")] for giveaway in giveaways])
+def main_menu(
+    giveaways: list[GiveawayRead | GiveawayReadWithRelations],
+    votings: list[object] | None = None,
+) -> InlineKeyboardMarkup:
+    rows = [
+        [InlineKeyboardButton(text=giveaway.name, callback_data=f"view_giveaway:{giveaway.id}")]
+        for giveaway in giveaways
+    ]
+    rows.extend(
+        [InlineKeyboardButton(text=f"🏆 {voting.name}", callback_data=f"vote:open:{voting.id}")]
+        for voting in (votings or [])
+    )
+    return InlineKeyboardMarkup(inline_keyboard=rows)
 def giveaway_menu(giveaway_id: int, *, joined: bool, has_notes: bool) -> InlineKeyboardMarkup:
     inline_keyboard: list[list[InlineKeyboardButton]] = []
     if has_notes: inline_keyboard.append([InlineKeyboardButton(text="📝 Примечания", callback_data=f"notes:{giveaway_id}")])

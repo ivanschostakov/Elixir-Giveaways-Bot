@@ -586,7 +586,7 @@ async def handle_confirm_ref_join_callback(
 
         check_context = {
             "user_id": call.from_user.id,
-            "participant_id": participant.id,
+            "participant_id": ref_participant.id,
             "inviter_user_id": ref_participant.user_id,
             "ref_id": ref_participant.user_id,
         }
